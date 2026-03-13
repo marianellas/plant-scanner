@@ -31,7 +31,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
 ## Usage
 
 ```bash
-python plant_id.py <path-to-image>
+python plant_id.py <path-to-image> [--plant-help "describe your issue"]
 ```
 
 ### Identify a single photo
@@ -63,19 +63,62 @@ Fetching care tips…
     5. Wipe leaves occasionally to remove dust and improve light absorption
 
 Saved to /path/to/plant-id/plants_log.json
+```
+
+---
+
+### Get help with a specific plant problem
+
+Use `--plant-help` to describe what's wrong. Claude will diagnose the likely cause and give targeted, actionable advice.
+
+```bash
+python plant_id.py plant_pics/plant_pic.jpg --plant-help "leaves are turning yellow and drooping"
+```
+
+```bash
+python plant_id.py plant_pics/plant_pic.jpg --plant-help "brown crispy edges on leaves"
+```
+
+```bash
+python plant_id.py plant_pics/plant_pic.jpg --plant-help "not growing and soil stays wet for weeks"
+```
+
+### Sample output with `--plant-help`
+
+```
+Identifying plant…
+  Species    : Epipremnum aureum
+  Common name: Golden Pothos
+  Confidence : 96%
+
+Fetching care tips…
+  Care tips:
+    1. Water when the top inch of soil feels dry
+    ...
+
+Diagnosing issue: 'leaves are turning yellow and drooping'…
+  Diagnosis: Overwatering is causing root rot and oxygen deprivation in the roots.
+  Advice:
+    1. Let the soil dry out completely before watering again
+    2. Remove the plant from its pot and inspect roots — trim any black or mushy ones
+    3. Repot in fresh, well-draining soil and ensure the pot has drainage holes
+
+Saved to /path/to/plant-id/plants_log.json
 {
   "timestamp": "2026-03-13T18:42:01.123456+00:00",
   "image_path": "plant_pics/plant_pic.jpg",
   "species": "Epipremnum aureum",
   "common_name": "Golden Pothos",
   "confidence": 0.96,
-  "care_tips": [
-    "Water when the top inch of soil feels dry",
-    "Thrives in bright indirect light but tolerates low light",
-    "Feed with a balanced liquid fertilizer monthly in spring and summer",
-    "Keep away from cold drafts and temperatures below 50°F (10°C)",
-    "Wipe leaves occasionally to remove dust and improve light absorption"
-  ]
+  "care_tips": [...],
+  "plant_help": {
+    "diagnosis": "Overwatering is causing root rot and oxygen deprivation in the roots.",
+    "advice": [
+      "Let the soil dry out completely before watering again",
+      "Remove the plant from its pot and inspect roots — trim any black or mushy ones",
+      "Repot in fresh, well-draining soil and ensure the pot has drainage holes"
+    ]
+  }
 }
 ```
 
