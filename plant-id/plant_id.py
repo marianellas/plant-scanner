@@ -3,7 +3,7 @@
 
 Usage:
     python plant_id.py <image_path>
-    python plant_id.py path/to/photo.jpg
+    python plant_id.py <image_path> --plant-help "leaves are turning yellow"
 """
 
 import argparse
@@ -31,7 +31,7 @@ def _detect_media_type(path: str) -> str:
     return _MEDIA_TYPES[kind]
 
 
-def run(image_path: str) -> None:
+def run(image_path: str, plant_help: str | None = None) -> None:
     try:
         with open(image_path, "rb") as f:
             raw = f.read()
@@ -67,7 +67,22 @@ def run(image_path: str) -> None:
     for i, tip in enumerate(care_result["care_tips"], 1):
         print(f"    {i}. {tip}")
 
-    entry = storage.append_entry(image_path, id_result, care_result)
+    if plant_help:
+        print(f"\nDiagnosing issue: '{plant_help}'…")
+        try:
+            help_result = care.get_plant_help(species, plant_help)
+        except ValueError as exc:
+            print(f"Plant help failed: {exc}", file=sys.stderr)
+            sys.exit(1)
+
+        print(f"  Diagnosis: {help_result['diagnosis']}")
+        print("  Advice:")
+        for i, step in enumerate(help_result["advice"], 1):
+            print(f"    {i}. {step}")
+    else:
+        help_result = None
+
+    entry = storage.append_entry(image_path, id_result, care_result, help_result)
     print(f"\nSaved to {storage.LOG_FILE}")
     print(json.dumps(entry, indent=2))
 
@@ -77,8 +92,13 @@ def main() -> None:
         description="Identify a plant from a photo and get care tips."
     )
     parser.add_argument("image", help="Path to the plant photo (JPEG/PNG/GIF/WebP)")
+    parser.add_argument(
+        "--plant-help",
+        metavar="ISSUE",
+        help='Describe a problem with your plant (e.g. "leaves are turning yellow")',
+    )
     args = parser.parse_args()
-    run(args.image)
+    run(args.image, plant_help=args.plant_help)
 
 
 if __name__ == "__main__":
