@@ -1,7 +1,8 @@
-"""Step 2: Text API calls — general care tips and targeted plant help.
+"""Step 2: Text API calls — general care tips, targeted plant help, and toxicity.
 
 get_care_tips  → {"care_tips": [str, ...]}
 get_plant_help → {"diagnosis": str, "advice": [str, ...]}
+get_toxicity   → {"toxic": bool, "details": str, "targets": [str, ...]}
 """
 
 import json
@@ -94,6 +95,54 @@ def get_plant_help(species: str, issue: str) -> dict:
         raise ValueError(f"API returned non-JSON response: {text!r}") from exc
 
     if "diagnosis" not in result or "advice" not in result:
+        raise ValueError(f"Response missing required keys: {result}")
+
+    return result
+
+
+_TOXIC_PROMPT_TEMPLATE = (
+    "You are a veterinarian and pediatric safety expert. "
+    "Is {species} toxic to {targets}?\n"
+    "Respond with ONLY valid JSON in exactly this format (no markdown, no extra text):\n"
+    '{{"toxic": <true|false>, "details": "<one sentence summary>", "targets": [<list of who it is toxic to from: {targets}>]}}'
+)
+
+TOXIC_CHOICES = ["cats", "dogs", "kids", "all"]
+
+
+def get_toxicity(species: str, target: str) -> dict:
+    """Call the Claude text API to check if a plant is toxic to cats, dogs, or kids.
+
+    Args:
+        species: Scientific or common name of the plant.
+        target: One of "cats", "dogs", "kids", or "all".
+
+    Returns:
+        dict with keys "toxic" (bool), "details" (str), and "targets" (list of str).
+
+    Raises:
+        ValueError: if the response is not valid JSON or is missing required keys.
+    """
+    targets = "cats, dogs, and children" if target == "all" else target
+    client = anthropic.Anthropic()
+    prompt = _TOXIC_PROMPT_TEMPLATE.format(species=species, targets=targets)
+
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=256,
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    text = next(
+        (block.text for block in response.content if block.type == "text"), ""
+    )
+
+    try:
+        result = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"API returned non-JSON response: {text!r}") from exc
+
+    if "toxic" not in result or "details" not in result:
         raise ValueError(f"Response missing required keys: {result}")
 
     return result
