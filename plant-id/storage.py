@@ -20,6 +20,7 @@ def append_entry(
     identification: dict,
     care: dict,
     help_result: dict | None = None,
+    toxic_result: dict | None = None,
 ) -> dict:
     """Append a new entry to the log and return it."""
     entry = {
@@ -35,6 +36,8 @@ def append_entry(
             "diagnosis": help_result["diagnosis"],
             "advice": help_result["advice"],
         }
+    if toxic_result:
+        entry["toxicity"] = toxic_result
     log = load_log()
     log.append(entry)
     with open(LOG_FILE, "w", encoding="utf-8") as f:
