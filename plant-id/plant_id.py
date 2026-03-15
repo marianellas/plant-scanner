@@ -31,7 +31,7 @@ def _detect_media_type(path: str) -> str:
     return _MEDIA_TYPES[kind]
 
 
-def run(image_path: str, plant_help: str | None = None) -> None:
+def run(image_path: str, plant_help: str | None = None, toxic: str | None = None) -> None:
     try:
         with open(image_path, "rb") as f:
             raw = f.read()
@@ -82,7 +82,22 @@ def run(image_path: str, plant_help: str | None = None) -> None:
     else:
         help_result = None
 
-    entry = storage.append_entry(image_path, id_result, care_result, help_result)
+    # --- Step 4 (optional): toxicity check ---
+    if toxic:
+        print(f"\nChecking toxicity for: {toxic}…")
+        try:
+            toxic_result = care.get_toxicity(species, toxic)
+        except ValueError as exc:
+            print(f"Toxicity check failed: {exc}", file=sys.stderr)
+            sys.exit(1)
+
+        label = "TOXIC" if toxic_result["toxic"] else "NOT TOXIC"
+        print(f"  Result : {label}")
+        print(f"  Details: {toxic_result['details']}")
+    else:
+        toxic_result = None
+
+    entry = storage.append_entry(image_path, id_result, care_result, help_result, toxic_result)
     print(f"\nSaved to {storage.LOG_FILE}")
     print(json.dumps(entry, indent=2))
 
@@ -97,8 +112,14 @@ def main() -> None:
         metavar="ISSUE",
         help='Describe a problem with your plant (e.g. "leaves are turning yellow")',
     )
+    parser.add_argument(
+        "--toxic",
+        choices=care.TOXIC_CHOICES,
+        metavar="TARGET",
+        help=f"Check if the plant is toxic to: {', '.join(care.TOXIC_CHOICES)}",
+    )
     args = parser.parse_args()
-    run(args.image, plant_help=args.plant_help)
+    run(args.image, plant_help=args.plant_help, toxic=args.toxic)
 
 
 if __name__ == "__main__":
