@@ -12,8 +12,10 @@ import anthropic
 MODEL = "claude-opus-4-6"
 
 _PROMPT_TEMPLATE = (
-    "You are a professional horticulturist. Provide practical care tips for {species}.\n"
-    "Respond with ONLY valid JSON in exactly this format (no markdown, no extra text):\n"
+    "You are a professional horticulturist. "
+    "Provide practical care tips for {species}.\n"
+    "Respond with ONLY valid JSON in exactly this format "
+    "(no markdown, no extra text):\n"
     '{{"care_tips": ["<tip 1>", "<tip 2>", "<tip 3>", "<tip 4>", "<tip 5>"]}}'
 )
 
