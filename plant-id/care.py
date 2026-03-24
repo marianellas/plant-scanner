@@ -57,11 +57,13 @@ def get_care_tips(species: str) -> dict:
 
 
 _HELP_PROMPT_TEMPLATE = (
-    "You are a professional horticulturist. A user has a {species} and is experiencing "
-    "the following issue: {issue}\n"
+    "You are a professional horticulturist. "
+    "A user has a {species} and is experiencing the following issue: {issue}\n"
     "Diagnose the likely cause and give specific, actionable advice to fix it.\n"
-    "Respond with ONLY valid JSON in exactly this format (no markdown, no extra text):\n"
-    '{{"diagnosis": "<one sentence cause>", "advice": ["<step 1>", "<step 2>", "<step 3>"]}}'
+    "Respond with ONLY valid JSON in exactly this format "
+    "(no markdown, no extra text):\n"
+    '{{"diagnosis": "<one sentence cause>", '
+    '"advice": ["<step 1>", "<step 2>", "<step 3>"]}}'
 )
 
 
@@ -105,8 +107,10 @@ def get_plant_help(species: str, issue: str) -> dict:
 _TOXIC_PROMPT_TEMPLATE = (
     "You are a veterinarian and pediatric safety expert. "
     "Is {species} toxic to {targets}?\n"
-    "Respond with ONLY valid JSON in exactly this format (no markdown, no extra text):\n"
-    '{{"toxic": <true|false>, "details": "<one sentence summary>", "targets": [<list of who it is toxic to from: {targets}>]}}'
+    "Respond with ONLY valid JSON in exactly this format "
+    "(no markdown, no extra text):\n"
+    '{{"toxic": <true|false>, "details": "<one sentence summary>", '
+    '"targets": [<list of who it is toxic to from: {targets}>]}}'
 )
 
 TOXIC_CHOICES = ["cats", "dogs", "kids", "all"]
