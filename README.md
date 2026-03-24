@@ -143,12 +143,35 @@ plant-scanner/
 
 ---
 
-## Running the tests
+## Development
+
+First install the dev dependencies:
 
 ```bash
-cd plant-id
-python -m pytest tests/ -v
+pip install anthropic flake8 mypy pytest
 ```
+
+**flake8**
+```bash
+flake8 . --exclude=tests/
+```
+
+**mypy**
+```bash
+mypy . --exclude=tests/
+```
+
+**pytest**
+```bash
+pytest tests/ -v
+```
+
+**All three at once**
+```bash
+flake8 . --exclude=tests/ && mypy . --exclude=tests/ && pytest tests/ -v
+```
+
+CI runs automatically on every push and pull request to `main` via GitHub Actions (`.github/workflows/ci.yml`).
 
 ---
 
