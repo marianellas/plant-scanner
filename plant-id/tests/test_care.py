@@ -112,7 +112,11 @@ class TestGetToxicity(unittest.TestCase):
         """get_toxicity returns a dict with toxic and details keys."""
         from care import get_toxicity
 
-        payload = {"toxic": True, "details": "Can cause vomiting in cats.", "targets": ["cats"]}
+        payload = {
+            "toxic": True,
+            "details": "Can cause vomiting in cats.",
+            "targets": ["cats"],
+        }
         MockAnthropic.return_value.messages.create.return_value = (
             self._make_mock_response(payload)
         )
@@ -131,7 +135,11 @@ class TestGetToxicity(unittest.TestCase):
 
         mock_client = MockAnthropic.return_value
         mock_client.messages.create.return_value = self._make_mock_response(
-            {"toxic": True, "details": "Toxic to all.", "targets": ["cats", "dogs", "children"]}
+            {
+                "toxic": True,
+                "details": "Toxic to all.",
+                "targets": ["cats", "dogs", "children"],
+            }
         )
 
         get_toxicity("Rosa canina", "all")
@@ -185,7 +193,10 @@ class TestGetPlantHelp(unittest.TestCase):
 
         payload = {
             "diagnosis": "Overwatering is causing root rot.",
-            "advice": ["Reduce watering to once a week", "Ensure pot has drainage holes"],
+            "advice": [
+                "Reduce watering to once a week",
+                "Ensure pot has drainage holes",
+            ],
         }
         MockAnthropic.return_value.messages.create.return_value = (
             self._make_mock_response(payload)

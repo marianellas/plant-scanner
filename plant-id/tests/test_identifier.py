@@ -20,7 +20,11 @@ class TestIdentifyPlant(unittest.TestCase):
         """identify_plant returns a dict with species and confidence keys."""
         from identifier import identify_plant
 
-        payload = {"species": "Rosa canina", "common_name": "Dog Rose", "confidence": 0.92}
+        payload = {
+            "species": "Rosa canina",
+            "common_name": "Dog Rose",
+            "confidence": 0.92,
+        }
         MockAnthropic.return_value.messages.create.return_value = (
             self._make_mock_response(payload)
         )
@@ -38,13 +42,22 @@ class TestIdentifyPlant(unittest.TestCase):
 
         mock_client = MockAnthropic.return_value
         mock_client.messages.create.return_value = self._make_mock_response(
-            {"species": "Quercus robur", "common_name": "English Oak", "confidence": 0.85}
+            {
+                "species": "Quercus robur",
+                "common_name": "English Oak",
+                "confidence": 0.85,
+            }
         )
 
         identify_plant("abc123", "image/png")
 
         call_kwargs = mock_client.messages.create.call_args
-        messages = call_kwargs.kwargs.get("messages") or call_kwargs.args[0] if call_kwargs.args else call_kwargs.kwargs["messages"]
+        messages = (
+            call_kwargs.kwargs.get("messages")
+            or call_kwargs.args[0]
+            if call_kwargs.args
+            else call_kwargs.kwargs["messages"]
+        )
 
         # Find the user message
         user_msg = next(m for m in messages if m["role"] == "user")
