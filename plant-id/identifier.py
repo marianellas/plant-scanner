@@ -10,10 +10,13 @@ import anthropic
 MODEL = "claude-opus-4-6"
 
 _PROMPT = (
-    "You are a professional botanist. Examine the plant in this image and identify it, "
-    "also commonly known as its popular name (e.g. Epipremnum aureum -> Golden Pothos).\n"
-    "Respond with ONLY valid JSON in exactly this format (no markdown, no extra text):\n"
-    '{"species": "<scientific name>", "common_name": "<common name>", "confidence": <float 0.0-1.0>}'
+    "You are a professional botanist. Examine the plant in this image and "
+    "identify it, also commonly known as its popular name "
+    "(e.g. Epipremnum aureum -> Golden Pothos).\n"
+    "Respond with ONLY valid JSON in exactly this format "
+    "(no markdown, no extra text):\n"
+    '{"species": "<scientific name>", "common_name": "<common name>", '
+    '"confidence": <float 0.0-1.0>}'
 )
 
 
